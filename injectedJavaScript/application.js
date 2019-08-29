@@ -27,7 +27,6 @@ export default ({penColor, backgroundColor, dataURL}) => `
         dotSize: window.devicePixelRatio * 2,
         minWidth: window.devicePixelRatio * 1,
         maxWidth: window.devicePixelRatio * 4,
-        backgroundColor: rgba(0,0,0,0),
         onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
       });
       /* signaturePad.translateMouseCoordinates = function (point) {
@@ -54,9 +53,6 @@ export default ({penColor, backgroundColor, dataURL}) => `
   if(!bodyHeight) {
     bodyHeight = window.innerHeight;
   }
-  
-  // set background
-  document.querySelector('body').style.backgroundColor = '${backgroundColor || '#ffffff'}',
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);

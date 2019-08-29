@@ -24,10 +24,10 @@ export default ({penColor, backgroundColor, dataURL}) => `
     var enableSignaturePadFunctionality = function () {
       var signaturePad = new SignaturePad(signaturePadCanvas, {
         penColor: '${penColor || 'black'}',
-        dotSize: window.devicePixelRatio * 1,
-        minWidth: window.devicePixelRatio * 0.5,
-        maxWidth: window.devicePixelRatio * 2.5,
-        backgroundColor: '${backgroundColor || 'rgba(0,0,0,0)'}',
+        dotSize: window.devicePixelRatio * 2,
+        minWidth: window.devicePixelRatio * 1,
+        maxWidth: window.devicePixelRatio * 4,
+        backgroundColor: rgba(0,0,0,0),
         onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
       });
       /* signaturePad.translateMouseCoordinates = function (point) {
@@ -36,8 +36,6 @@ export default ({penColor, backgroundColor, dataURL}) => `
         point.x = translatedX;
         point.y = translatedY;
       }; */
-      signaturePad.minWidth = 1;
-      signaturePad.maxWidth = 4;
       if ('${dataURL}') {
         signaturePad.fromDataURL('${dataURL}');
       }
@@ -56,6 +54,9 @@ export default ({penColor, backgroundColor, dataURL}) => `
   if(!bodyHeight) {
     bodyHeight = window.innerHeight;
   }
+  
+  // set background
+  document.querySelector('body').style.backgroundColor = '${backgroundColor || '#ffffff'}',
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);

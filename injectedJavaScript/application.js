@@ -27,7 +27,7 @@ export default ({penColor, backgroundColor, dataURL}) => `
         dotSize: window.devicePixelRatio * 1,
         minWidth: window.devicePixelRatio * 0.5,
         maxWidth: window.devicePixelRatio * 2.5,
-        backgroundColor: '${backgroundColor || 'backgroundColor(0,0,0,0)'}',
+        backgroundColor: '${backgroundColor || 'rgba(0,0,0,0)'}',
         onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
       });
       /* signaturePad.translateMouseCoordinates = function (point) {

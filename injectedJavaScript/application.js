@@ -1,4 +1,4 @@
-export default ({penColor, backgroundColor, dataURL}) => `
+export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
 
   var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
     /*We're rotating by 90% -> Flip X and Y*/
@@ -24,9 +24,9 @@ export default ({penColor, backgroundColor, dataURL}) => `
     var enableSignaturePadFunctionality = function () {
       var signaturePad = new SignaturePad(signaturePadCanvas, {
         penColor: '${penColor || 'black'}',
-        dotSize: window.devicePixelRatio * 2,
-        minWidth: window.devicePixelRatio * 1,
-        maxWidth: window.devicePixelRatio * 4,
+        dotSize: window.devicePixelRatio * ${dotSize || 3},
+        minWidth: window.devicePixelRatio * ${minWidth || 1},
+        maxWidth: window.devicePixelRatio * ${maxWidth || 4},
         onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
       });
       /* signaturePad.translateMouseCoordinates = function (point) {

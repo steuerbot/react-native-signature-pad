@@ -1,10 +1,19 @@
 export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
 
-  var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
-    /*We're rotating by 90% -> Flip X and Y*/
-    /*var width = bodyHeight;
-    var height = bodyWidth;*/
+  window.onerror = function(message, url, line, column, error) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      func: 'onError',
+      args: {
+        message: message,
+        url: url,
+        line: line,
+        column: column,
+        error: error,
+      },
+    }));
+  };
 
+  var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
     var width = bodyWidth;
     var height = bodyHeight;
 
@@ -23,8 +32,11 @@ export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
         dotSize: window.devicePixelRatio * ${dotSize || 3},
         minWidth: window.devicePixelRatio * ${minWidth || 1},
         maxWidth: window.devicePixelRatio * ${maxWidth || 4},
-        onEnd: function() { 
-          executePropsFunction('onChange', signaturePad.toDataURL());
+        onEnd: function() {
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            func: 'onChange',
+            args: [signaturePad.toDataURL()],
+          }));
         }
       });
       if ('${dataURL}') {
@@ -36,15 +48,8 @@ export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
     enableSignaturePadFunctionality();
   };
 
-
-  var bodyWidth = document.body.clientWidth;
-  var bodyHeight = document.body.clientHeight;
-  if(!bodyWidth) {
-    bodyWidth = window.innerWidth;
-  }
-  if(!bodyHeight) {
-    bodyHeight = window.innerHeight;
-  }
+  var bodyWidth = document.body.clientWidth || window.innerWidth;
+  var bodyHeight = document.body.clientHeight || window.innerHeight;
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);

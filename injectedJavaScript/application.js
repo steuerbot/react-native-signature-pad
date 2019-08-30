@@ -1,9 +1,9 @@
 export default ({
-    penColor = '#000000',
-    dataURL = null,
-    minWidth = 1,
-    maxWidth = 3,
-    dotSize = 3,
+  penColor = '#000000',
+  dataURL = null,
+  minWidth = 1,
+  maxWidth = 3,
+  dotSize = 3,
 }) => `
 
   window.onerror = function(message, url, line, column, error) {
@@ -45,7 +45,11 @@ export default ({
           }));
         }
       });
-      ${dataURL ? `signaturePad.fromDataURL('${dataURL}')` : ''}
+      ${dataURL ? `signaturePad.fromDataURL('${dataURL}');` : ''}
+      window.addEventListener('message', function(event) {
+        var obj = JSON.parse(event.data);
+        signaturePad[obj.func].apply(signaturePad, obj.args);
+      });
     };
 
     sizeSignaturePad();

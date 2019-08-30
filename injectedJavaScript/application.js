@@ -1,12 +1,10 @@
 export default ({
-                    backgroundColor = '#ffffff',
-                    penColor = '#000000',
-                    dataURL = null,
-                    minWidth = 1,
-                    maxWidth = 3,
-                    dotSize = 3,
-                }) => `
-  document.body.style.backgroundColor = '${backgroundColor}';
+    penColor = '#000000',
+    dataURL = null,
+    minWidth = 1,
+    maxWidth = 3,
+    dotSize = 3,
+}) => `
 
   window.onerror = function(message, url, line, column, error) {
     window.ReactNativeWebView.postMessage(JSON.stringify({

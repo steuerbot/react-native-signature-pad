@@ -19,14 +19,14 @@ const SignaturePad = props => {
   }, []);
 
   const source = useMemo(() => {
-    const injectedJavaScript =
+    const script =
         injectedSignaturePad +
-        injectedApplication({
-          ...props,
-          backgroundColor: StyleSheet.flatten(style).backgroundColor,
-        });
+        injectedApplication(props);
     return {
-      html: htmlContent(injectedJavaScript),
+      html: htmlContent({
+        script,
+        backgroundColor: StyleSheet.flatten(style).backgroundColor,
+      }),
     };
   }, [props]);
 

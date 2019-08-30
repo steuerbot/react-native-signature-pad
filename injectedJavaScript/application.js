@@ -50,7 +50,8 @@ export default ({
         }
       });
       ${dataURL ? `signaturePad.fromDataURL('${dataURL}');` : ''}
-      window.addEventListener('message', function(event) {
+      
+      var eventHandler = function(event) {
         var obj = JSON.parse(event.data);
         if(obj.func === 'cropData') {
           var croppedDataUrl = getCroppedDataUrl();
@@ -61,7 +62,9 @@ export default ({
           return;
         }
         signaturePad[obj.func].apply(signaturePad, obj.args);
-      });
+      };
+      window.addEventListener('message', eventHandler);
+      document.addEventListener('message', eventHandler);
     };
 
     sizeSignaturePad();

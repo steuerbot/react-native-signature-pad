@@ -1,6 +1,6 @@
-import React, { forwardRef, memo, useCallback, useMemo, useState } from 'react';
-import { PixelRatio, StyleSheet, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import React, {forwardRef, memo, useCallback, useMemo, useState} from 'react';
+import {PixelRatio, StyleSheet, View} from 'react-native';
+import {WebView} from 'react-native-webview';
 
 import htmlContent from './injectedHtml';
 import injectedSignaturePad from './injectedJavaScript/signaturePad';
@@ -9,7 +9,7 @@ import injectedApplication from './injectedJavaScript/application';
 const noopFunction = () => {};
 
 const SignaturePad = (props, ref) => {
-  const { onError = noopFunction, onStart = noopFunction, style = {} } = props;
+  const { onError = noopFunction, style = {} } = props;
 
   const [size, setSize] = useState(null);
   const onLayout = useCallback(e => {
@@ -83,6 +83,7 @@ const SignaturePad = (props, ref) => {
         ref.current = {
           webView,
           clear: getExecuteFunction('clear'),
+          cropData: getExecuteFunction('cropData'),
         };
       }
     },

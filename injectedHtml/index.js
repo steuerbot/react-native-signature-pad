@@ -8,7 +8,7 @@ export default ({script, backgroundColor = '#ffffff'}) =>
     }
     
     body {
-        backgroundColor: ${backgroundColor}
+      background: ${backgroundColor};
     }
 
     canvas {

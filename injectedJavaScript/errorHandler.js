@@ -1,7 +1,5 @@
-var content = `
+export default `
 window.onerror = function(message, url, line, column, error) {
-  executeNativeFunction('jsError', {message: message, url: url, line: line, column: column});
+  executePropsFunction('onError', {message: message, url: url, line: line, column: column});
 };
 `;
-
-export default content;

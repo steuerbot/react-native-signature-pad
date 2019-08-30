@@ -17,24 +17,16 @@ export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
       signaturePadCanvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
     };
 
-    var finishedStroke = function(base64DataUrl) {
-       executeNativeFunction('finishedStroke', {base64DataUrl: base64DataUrl});
-    };
-
     var enableSignaturePadFunctionality = function () {
       var signaturePad = new SignaturePad(signaturePadCanvas, {
         penColor: '${penColor || 'black'}',
         dotSize: window.devicePixelRatio * ${dotSize || 3},
         minWidth: window.devicePixelRatio * ${minWidth || 1},
         maxWidth: window.devicePixelRatio * ${maxWidth || 4},
-        onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
+        onEnd: function() { 
+          executePropsFunction('onChange', signaturePad.toDataURL());
+        }
       });
-      /* signaturePad.translateMouseCoordinates = function (point) {
-        var translatedY = point.x;
-        var translatedX = width - point.y;
-        point.x = translatedX;
-        point.y = translatedY;
-      }; */
       if ('${dataURL}') {
         signaturePad.fromDataURL('${dataURL}');
       }

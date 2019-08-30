@@ -1,11 +1,12 @@
 export default ({
-                    penColor,
-                    dataURL,
-                    minWidth,
-                    maxWidth,
-                    dotSize,
-                    backgroundColor,
+                    backgroundColor = '#ffffff',
+                    penColor = '#000000',
+                    dataURL = null,
+                    minWidth = 1,
+                    maxWidth = 3,
+                    dotSize = 3,
                 }) => `
+  document.body.style.backgroundColor = '${backgroundColor}';
 
   window.onerror = function(message, url, line, column, error) {
     window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -36,9 +37,9 @@ export default ({
     var enableSignaturePadFunctionality = function () {
       var signaturePad = new SignaturePad(signaturePadCanvas, {
         penColor: '${penColor || 'black'}',
-        dotSize: window.devicePixelRatio * ${dotSize || 3},
-        minWidth: window.devicePixelRatio * ${minWidth || 1},
-        maxWidth: window.devicePixelRatio * ${maxWidth || 4},
+        dotSize: window.devicePixelRatio * ${dotSize},
+        minWidth: window.devicePixelRatio * ${minWidth},
+        maxWidth: window.devicePixelRatio * ${maxWidth},
         onEnd: function() {
           window.ReactNativeWebView.postMessage(JSON.stringify({
             func: 'onChange',
@@ -46,9 +47,7 @@ export default ({
           }));
         }
       });
-      if ('${dataURL}') {
-        signaturePad.fromDataURL('${dataURL}');
-      }
+      ${dataURL ? `signaturePad.fromDataURL('${dataURL}')` : ''}
     };
 
     sizeSignaturePad();
@@ -60,6 +59,4 @@ export default ({
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);
-  
-  document.body.style.backgroundColor = '${backgroundColor || '#ffffff'}';
 `;

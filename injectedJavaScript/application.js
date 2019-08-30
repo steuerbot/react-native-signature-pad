@@ -1,4 +1,11 @@
-export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
+export default ({
+                    penColor,
+                    dataURL,
+                    minWidth,
+                    maxWidth,
+                    dotSize,
+                    backgroundColor,
+                }) => `
 
   window.onerror = function(message, url, line, column, error) {
     window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -53,4 +60,6 @@ export default ({penColor, dataURL, minWidth, maxWidth, dotSize}) => `
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);
+  
+  document.body.style.backgroundColor = '${backgroundColor || '#ffffff'}';
 `;

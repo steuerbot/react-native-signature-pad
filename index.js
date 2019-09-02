@@ -77,7 +77,7 @@ const SignaturePad = (props, ref) => {
   const setRef = useCallback(
     webView => {
       const getExecuteFunction = (func, args = []) => {
-        return () => webView.postMessage(JSON.stringify({ func, args }));
+        return () => webView.injectJavaScript(`window.${func}();true;`);
       };
       if (ref) {
         ref.current = {
@@ -91,23 +91,23 @@ const SignaturePad = (props, ref) => {
   );
 
   return (
-    <View style={containerStyle} onLayout={onLayout}>
-      {size && (
-        <View style={size}>
-          <WebView
-            ref={setRef}
-            automaticallyAdjustContentInsets={false}
-            onMessage={onMessage}
-            onLoadEnd={start}
-            renderError={onError}
-            renderLoading={noopFunction}
-            source={source}
-            javaScriptEnabled={true}
-            style={padStyle}
-          />
-        </View>
-      )}
-    </View>
+      <View style={containerStyle} onLayout={onLayout}>
+        {size && (
+            <View style={size}>
+              <WebView
+                  ref={setRef}
+                  automaticallyAdjustContentInsets={false}
+                  onMessage={onMessage}
+                  onLoadEnd={start}
+                  renderError={onError}
+                  renderLoading={noopFunction}
+                  source={source}
+                  javaScriptEnabled={true}
+                  style={padStyle}
+              />
+            </View>
+        )}
+      </View>
   );
 };
 

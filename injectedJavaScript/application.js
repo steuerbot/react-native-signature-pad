@@ -1,9 +1,9 @@
 export default ({
-                  penColor = '#000000',
-                  dataURL = null,
-                  minWidth = 1,
-                  maxWidth = 3,
-                  dotSize = 3,
+                    penColor = '#000000',
+                    dataURL = null,
+                    minWidth = 1,
+                    maxWidth = 3,
+                    dotSize = 3,
                 }) => `
 
   window.onerror = function(message, url, line, column, error) {
@@ -26,7 +26,7 @@ export default ({
   signaturePadCanvas.width = bodyWidth;
   signaturePadCanvas.height = bodyHeight;
   
-  var signaturePad = new SignaturePad(signaturePadCanvas, {
+  window.signaturePad = new SignaturePad(signaturePadCanvas, {
     penColor: '${penColor}',
     dotSize: window.devicePixelRatio * ${dotSize},
     minWidth: window.devicePixelRatio * ${minWidth},
@@ -34,28 +34,13 @@ export default ({
     onEnd: function() {
       window.ReactNativeWebView.postMessage(JSON.stringify({
         func: 'onChange',
-        args: [signaturePad.toDataURL()],
+        args: [window.signaturePad.toDataURL()],
       }));
     }
   });
-  ${dataURL ? `signaturePad.fromDataURL('${dataURL}');` : ''}
-    
-  var eventHandler = function(event) {
-    var obj = JSON.parse(event.data);
-    if(obj.func === 'cropData') {
-      var croppedDataUrl = getCroppedDataUrl();
-      window.ReactNativeWebView.postMessage(JSON.stringify({
-        func: 'onDataCropped',
-        args: [croppedDataUrl],
-      }));
-      return;
-    }
-    signaturePad[obj.func].apply(signaturePad, obj.args);
-  };
-  window.addEventListener('message', eventHandler);
-  document.addEventListener('message', eventHandler);
+  ${dataURL ? `window.signaturePad.fromDataURL('${dataURL}');` : ''}
   
-  var getCroppedDataUrl = function() {
+  var cropData = function() {
     var imgWidth = signaturePadCanvas.width;
     var imgHeight = signaturePadCanvas.height;
     var imageData = signaturePadCanvas.getContext("2d").getImageData(0, 0, imgWidth, imgHeight);
@@ -108,6 +93,11 @@ export default ({
     tempCanvas.height = cropBottom-cropTop;
     tempCanvas.getContext("2d").putImageData(relevantData, 0, 0);
     
-    return tempCanvas.toDataURL('image/png');
+    var result = tempCanvas.toDataURL('image/png');
+    
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      func: 'onDataCropped',
+      args: [result],
+    }));
   }
 `;

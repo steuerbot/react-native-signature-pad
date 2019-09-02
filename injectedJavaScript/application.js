@@ -1,80 +1,69 @@
 export default ({
-  penColor = '#000000',
-  dataURL = null,
-  minWidth = 1,
-  maxWidth = 3,
-  dotSize = 3,
-}) => `
+                  penColor = '#000000',
+                  dataURL = null,
+                  minWidth = 1,
+                  maxWidth = 3,
+                  dotSize = 3,
+                }) => `
 
   window.onerror = function(message, url, line, column, error) {
     window.ReactNativeWebView.postMessage(JSON.stringify({
       func: 'onError',
-      args: {
+      args: [{
         message: message,
         url: url,
         line: line,
         column: column,
         error: error,
-      },
+      }],
     }));
   };
   
   var bodyWidth = document.body.clientWidth || window.innerWidth;
   var bodyHeight = document.body.clientHeight || window.innerHeight;
-  var canvasElement = document.querySelector('canvas');
-
-  var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
-    var width = bodyWidth;
-    var height = bodyHeight;
-
-    var sizeSignaturePad = function () {
-      var devicePixelRatio = 1; /*window.devicePixelRatio || 1;*/
-      var canvasWidth = width * devicePixelRatio;
-      var canvasHeight = height * devicePixelRatio;
-      signaturePadCanvas.width = canvasWidth;
-      signaturePadCanvas.height = canvasHeight;
-      signaturePadCanvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
-    };
-
-    var enableSignaturePadFunctionality = function () {
-      var signaturePad = new SignaturePad(signaturePadCanvas, {
-        penColor: '${penColor || 'black'}',
-        dotSize: window.devicePixelRatio * ${dotSize},
-        minWidth: window.devicePixelRatio * ${minWidth},
-        maxWidth: window.devicePixelRatio * ${maxWidth},
-        onEnd: function() {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            func: 'onChange',
-            args: [signaturePad.toDataURL()],
-          }));
-        }
-      });
-      ${dataURL ? `signaturePad.fromDataURL('${dataURL}');` : ''}
-      
-      var eventHandler = function(event) {
-        var obj = JSON.parse(event.data);
-        if(obj.func === 'cropData') {
-          var croppedDataUrl = getCroppedDataUrl();
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            func: 'onDataCropped',
-            args: [croppedDataUrl],
-          }));
-          return;
-        }
-        signaturePad[obj.func].apply(signaturePad, obj.args);
-      };
-      window.addEventListener('message', eventHandler);
-      document.addEventListener('message', eventHandler);
-    };
-
-    sizeSignaturePad();
-    enableSignaturePadFunctionality();
+  var signaturePadCanvas = document.querySelector('canvas');
+  
+  window.ReactNativeWebView.postMessage(JSON.stringify({
+    func: 'onChange',
+    args: ['window.devicePixelRatio', window.devicePixelRatio * ${dotSize}, bodyWidth],
+  }));
+  
+  signaturePadCanvas.width = bodyWidth;
+  signaturePadCanvas.height = bodyHeight;
+  
+  var signaturePad = new SignaturePad(signaturePadCanvas, {
+    penColor: '${penColor}',
+    dotSize: window.devicePixelRatio * ${dotSize},
+    minWidth: window.devicePixelRatio * ${minWidth},
+    maxWidth: window.devicePixelRatio * ${maxWidth},
+    onEnd: function() {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        func: 'onChange',
+        args: [signaturePad.toDataURL()],
+      }));
+    }
+  });
+  ${dataURL ? `signaturePad.fromDataURL('${dataURL}');` : ''}
+    
+  var eventHandler = function(event) {
+    var obj = JSON.parse(event.data);
+    if(obj.func === 'cropData') {
+      var croppedDataUrl = getCroppedDataUrl();
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        func: 'onDataCropped',
+        args: [croppedDataUrl],
+      }));
+      return;
+    }
+    signaturePad[obj.func].apply(signaturePad, obj.args);
   };
+  window.addEventListener('message', eventHandler);
+  document.addEventListener('message', eventHandler);
   
   var getCroppedDataUrl = function() {
-    var imgWidth = canvasElement.width;
-    var imgHeight = canvasElement.height;
-    var imageData = canvasElement.getContext("2d").getImageData(0, 0, imgWidth, imgHeight);
+    var imgWidth = signaturePadCanvas.width;
+    var imgHeight = signaturePadCanvas.height;
+    var imageData = signaturePadCanvas.getContext("2d").getImageData(0, 0, imgWidth, imgHeight);
     var data = imageData.data;
     
     var getAlpha = function(x, y) {
@@ -118,7 +107,7 @@ export default ({
       return null;
     }
 
-    var relevantData = canvasElement.getContext("2d").getImageData(cropLeft, cropTop, cropRight-cropLeft, cropBottom-cropTop);
+    var relevantData = signaturePadCanvas.getContext("2d").getImageData(cropLeft, cropTop, cropRight-cropLeft, cropBottom-cropTop);
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = cropRight-cropLeft;
     tempCanvas.height = cropBottom-cropTop;
@@ -126,6 +115,4 @@ export default ({
     
     return tempCanvas.toDataURL('image/png');
   }
-
-  showSignaturePad(canvasElement, bodyWidth, bodyHeight);
 `;

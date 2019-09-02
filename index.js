@@ -82,7 +82,7 @@ const SignaturePad = (props, ref) => {
       if (ref) {
         ref.current = {
           webView,
-          clear: getExecuteFunction('clear'),
+          clear: getExecuteFunction('signaturePad.clear'),
           cropData: getExecuteFunction('cropData'),
         };
       }

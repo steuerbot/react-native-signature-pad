@@ -23,11 +23,6 @@ export default ({
   var bodyHeight = document.body.clientHeight || window.innerHeight;
   var signaturePadCanvas = document.querySelector('canvas');
   
-  window.ReactNativeWebView.postMessage(JSON.stringify({
-    func: 'onChange',
-    args: ['window.devicePixelRatio', window.devicePixelRatio * ${dotSize}, bodyWidth],
-  }));
-  
   signaturePadCanvas.width = bodyWidth;
   signaturePadCanvas.height = bodyHeight;
   

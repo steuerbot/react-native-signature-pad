@@ -9,7 +9,7 @@ import injectedApplication from './injectedJavaScript/application';
 const noopFunction = () => {};
 
 const SignaturePad = (props, ref) => {
-  const { onError = noopFunction, style = {} } = props;
+  const { onError = noopFunction, style = {}, subtitle = '&nbsp;' } = props;
 
   const [size, setSize] = useState(null);
   const onLayout = useCallback(e => {
@@ -38,17 +38,13 @@ const SignaturePad = (props, ref) => {
   const [started, setStarted] = useState(false);
   const start = useCallback(() => setTimeout(() => setStarted(true), 100), []);
 
-  const backgroundColor = useMemo(() => {
-    return StyleSheet.flatten(style).backgroundColor || '#ffffff';
-  }, [style]);
+  const backgroundColor = useMemo(() => StyleSheet.flatten(style).backgroundColor || '#ffffff', [style]);
 
-  const padStyle = useMemo(() => {
-    return {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor,
-      opacity: started ? 1 : 0,
-    };
-  }, [style, backgroundColor, started]);
+  const padStyle = useMemo(() => ({
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor,
+    opacity: started ? 1 : 0,
+  }), [style, backgroundColor, started]);
 
   const containerStyle = useMemo(() => {
     return {
@@ -66,10 +62,13 @@ const SignaturePad = (props, ref) => {
 
   const source = useMemo(() => {
     const script = injectedSignaturePad + injectedApplication(props);
+    const ratio = Math.max(PixelRatio.get(), 1);
     return {
       html: htmlContent({
         script,
         backgroundColor,
+        ratio,
+        subtitle,
       }),
     };
   }, [props, backgroundColor]);
@@ -91,23 +90,23 @@ const SignaturePad = (props, ref) => {
   );
 
   return (
-      <View style={containerStyle} onLayout={onLayout}>
-        {size && (
-            <View style={size}>
-              <WebView
-                  ref={setRef}
-                  automaticallyAdjustContentInsets={false}
-                  onMessage={onMessage}
-                  onLoadEnd={start}
-                  renderError={onError}
-                  renderLoading={noopFunction}
-                  source={source}
-                  javaScriptEnabled={true}
-                  style={padStyle}
-              />
-            </View>
-        )}
-      </View>
+    <View style={containerStyle} onLayout={onLayout}>
+      {size && (
+        <View style={size}>
+          <WebView
+            ref={setRef}
+            automaticallyAdjustContentInsets={false}
+            onMessage={onMessage}
+            onLoadEnd={start}
+            renderError={onError}
+            renderLoading={noopFunction}
+            source={source}
+            javaScriptEnabled={true}
+            style={padStyle}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 

@@ -100,7 +100,7 @@ export default ({
     if(!crop.fillRateAbsolute) {
       send({
         func: 'onDataCropped',
-        args: [null],
+        args: [null, crop],
       });
       return;
     }

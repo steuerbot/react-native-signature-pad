@@ -1,13 +1,16 @@
 export default ({
-                    penColor = '#000000',
-                    dataURL = null,
-                    minWidth = 1,
-                    maxWidth = 3,
-                    dotSize = 3,
-                }) => `
+    penColor = '#000000',
+    dataURL = null,
+    minWidth = 1,
+    maxWidth = 3,
+    dotSize = 3,
+}) => `
+  const send = function(obj) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(obj));
+  };
 
   window.onerror = function(message, url, line, column, error) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({
+    send({
       func: 'onError',
       args: [{
         message: message,
@@ -16,7 +19,7 @@ export default ({
         column: column,
         error: error,
       }],
-    }));
+    });
   };
   
   var bodyWidth = document.body.clientWidth || window.innerWidth;
@@ -32,10 +35,10 @@ export default ({
     minWidth: window.devicePixelRatio * ${minWidth},
     maxWidth: window.devicePixelRatio * ${maxWidth},
     onEnd: function() {
-      window.ReactNativeWebView.postMessage(JSON.stringify({
+      send({
         func: 'onChange',
         args: [window.signaturePad.toDataURL()],
-      }));
+      });
     }
   });
   ${dataURL ? `window.signaturePad.fromDataURL('${dataURL}');` : ''}
@@ -75,6 +78,10 @@ export default ({
           }      
         }
       }
+      send({
+        func: 'onDataCropped',
+        args: [null],
+      });
       return null; // all image is white
     };
 
@@ -84,6 +91,10 @@ export default ({
     cropRight = scanX(false);
     
     if(cropTop === null || cropLeft === null || cropBottom === null || cropRight === null) {
+      send({
+        func: 'onDataCropped',
+        args: [null],
+      });
       return null;
     }
 
@@ -95,9 +106,9 @@ export default ({
     
     var result = tempCanvas.toDataURL('image/png');
     
-    window.ReactNativeWebView.postMessage(JSON.stringify({
+    send({
       func: 'onDataCropped',
       args: [result],
-    }));
+    });
   }
 `;

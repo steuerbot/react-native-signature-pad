@@ -71,7 +71,7 @@ const SignaturePad = (props, ref) => {
         subtitle,
       }),
     };
-  }, [props, backgroundColor]);
+  }, [props, backgroundColor, subtitle]);
 
   const setRef = useCallback(
     webView => {

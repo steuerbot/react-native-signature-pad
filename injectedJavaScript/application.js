@@ -102,7 +102,7 @@ export default ({
         func: 'onDataCropped',
         args: [null, crop],
       });
-      return;
+      return null;
     }
 
     var relevantData = signaturePadCanvas.getContext("2d").getImageData(crop.xMin, crop.yMin, crop.width, crop.height);
@@ -117,5 +117,6 @@ export default ({
       func: 'onDataCropped',
       args: [result, crop],
     });
+    return null;
   }
 `;

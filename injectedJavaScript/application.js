@@ -34,6 +34,12 @@ export default ({
     dotSize: window.devicePixelRatio * ${dotSize},
     minWidth: window.devicePixelRatio * ${minWidth},
     maxWidth: window.devicePixelRatio * ${maxWidth},
+    onBegin: function() {
+      send({
+        func: 'onBegin',
+        args: [],
+      });
+    },
     onEnd: function() {
       send({
         func: 'onChange',
@@ -53,7 +59,7 @@ export default ({
       return data[(imgWidth*y + x) * 4 + 3]
     };
     var scan = function() {
-      var xMin = -Infinity, xMax = Infinity, yMin = -Infinity, yMax = Infinity;
+      var xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
       var filledPixel = 0;
       var filledWidth = 0;
       var filledHeight = 0;
@@ -92,13 +98,14 @@ export default ({
         height: filledHeight,
         fillRateAbsolute: filledPixel / (imgWidth*imgHeight),
         fillRateRelative: filledPixel ? filledPixel / (filledWidth*filledHeight) : 0,
+        fillAreaRate: (filledWidth*filledHeight) / (imgWidth*imgHeight),
       };
     };
 
     var crop = scan();
+    crop.data = null;
     
     if(!crop.fillRateAbsolute) {
-      crop.data = null;
       send({
         func: 'onDataCropped',
         args: [crop],

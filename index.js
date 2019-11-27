@@ -9,7 +9,7 @@ import injectedApplication from './injectedJavaScript/application';
 const noopFunction = () => {};
 
 const SignaturePad = (props, ref) => {
-  const { onError = noopFunction, style = {}, subtitle = '&nbsp;' } = props;
+  const { onError = noopFunction, style = {}, subtitle = '&nbsp;', loader = noopFunction } = props;
 
   const [size, setSize] = useState(null);
   const onLayout = useCallback(e => {
@@ -99,7 +99,7 @@ const SignaturePad = (props, ref) => {
             onMessage={onMessage}
             onLoadEnd={start}
             renderError={onError}
-            renderLoading={noopFunction}
+            renderLoading={loader}
             source={source}
             javaScriptEnabled={true}
             style={padStyle}

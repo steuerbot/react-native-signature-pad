@@ -98,9 +98,10 @@ export default ({
     var crop = scan();
     
     if(!crop.fillRateAbsolute) {
+      crop.data = null;
       send({
         func: 'onDataCropped',
-        args: [null, crop],
+        args: [crop],
       });
       return null;
     }
@@ -113,9 +114,10 @@ export default ({
     
     var result = tempCanvas.toDataURL('image/png');
     
+    crop.data = result;
     send({
       func: 'onDataCropped',
-      args: [result, crop],
+      args: [crop],
     });
     return null;
   }

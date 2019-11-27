@@ -115,7 +115,7 @@ export default ({
     
     send({
       func: 'onDataCropped',
-      args: [result],
+      args: [result, crop],
     });
   }
 `;

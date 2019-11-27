@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useCallback, useMemo, useState} from 'react';
+import React, {forwardRef, memo, useCallback, useEffect, useMemo, useState,} from 'react';
 import {PixelRatio, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 
@@ -9,7 +9,13 @@ import injectedApplication from './injectedJavaScript/application';
 const noopFunction = () => {};
 
 const SignaturePad = (props, ref) => {
-  const { onError = noopFunction, style = {}, subtitle = '&nbsp;', loader = noopFunction } = props;
+  const {
+    onError = noopFunction,
+    style = {},
+    subtitle = '&nbsp;',
+    loader = noopFunction,
+    off = false,
+  } = props;
 
   const [size, setSize] = useState(null);
   const onLayout = useCallback(e => {
@@ -38,13 +44,19 @@ const SignaturePad = (props, ref) => {
   const [started, setStarted] = useState(false);
   const start = useCallback(() => setTimeout(() => setStarted(true), 100), []);
 
-  const backgroundColor = useMemo(() => StyleSheet.flatten(style).backgroundColor || '#ffffff', [style]);
+  const backgroundColor = useMemo(
+    () => StyleSheet.flatten(style).backgroundColor || '#ffffff',
+    [style]
+  );
 
-  const padStyle = useMemo(() => ({
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor,
-    opacity: started ? 1 : 0,
-  }), [style, backgroundColor, started]);
+  const padStyle = useMemo(
+    () => ({
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor,
+      opacity: started ? 1 : 0,
+    }),
+    [style, backgroundColor, started]
+  );
 
   const containerStyle = useMemo(() => {
     return {
@@ -73,8 +85,11 @@ const SignaturePad = (props, ref) => {
     };
   }, [props, backgroundColor, subtitle]);
 
+  const [webViewInstance, setWebView] = useState();
+
   const setRef = useCallback(
     webView => {
+      setWebView(webView);
       const getExecuteFunction = (func, args = []) => {
         return () => webView.injectJavaScript(`window.${func}();true;`);
       };
@@ -88,6 +103,17 @@ const SignaturePad = (props, ref) => {
     },
     [ref]
   );
+
+  useEffect(() => {
+    if (!started || !webViewInstance) {
+      return;
+    }
+    if (off) {
+      webViewInstance.injectJavaScript('window.signaturePad.off();true;');
+    } else {
+      webViewInstance.injectJavaScript('window.signaturePad.on();true;');
+    }
+  }, [started, off, webViewInstance]);
 
   return (
     <View style={containerStyle} onLayout={onLayout}>

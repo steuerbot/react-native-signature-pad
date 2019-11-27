@@ -52,56 +52,63 @@ export default ({
     var getAlpha = function(x, y) {
       return data[(imgWidth*y + x) * 4 + 3]
     };
-    var scanY = function (fromTop) {
-      var offset = fromTop ? 1 : -1;
-
-      // loop through each row
-      for(var y = fromTop ? 0 : imgHeight - 1; fromTop ? (y < imgHeight) : (y > -1); y += offset) {
-        // loop through each column
-        for(var x = 0; x < imgWidth; x++) {
-          if (getAlpha(x, y)) {
-            return y;                        
-          }      
-        }
-      }
-      return null; // all image is white
-    };
-    var scanX = function (fromLeft) {
-      var offset = fromLeft? 1 : -1;
-
-      // loop through each column
-      for(var x = fromLeft ? 0 : imgWidth - 1; fromLeft ? (x < imgWidth) : (x > -1); x += offset) {
+    var scan = function() {
+      var xMin = -Infinity, xMax = Infinity, yMin = -Infinity, yMax = Infinity;
+      var filledPixel = 0;
+      var filledWidth = 0;
+      var filledHeight = 0;
+      
+      for(var x = 0; x < imgWidth; x++) {
         // loop through each row
         for(var y = 0; y < imgHeight; y++) {
           if (getAlpha(x, y)) {
-            return x;                        
+            filledPixel++;
+            if(x < xMin) {
+              xMin = x;
+            }
+            if(x > xMax) {
+              xMax = x;
+            }          
+            if(y < yMin) {
+              yMin = y;
+            }
+            if(y > yMax) {
+              yMax = y;
+            }       
           }      
         }
       }
-      send({
-        func: 'onDataCropped',
-        args: [null],
-      });
-      return null; // all image is white
+      if(filledPixel) {
+        filledWidth = xMax-xMin+1;
+        filledHeight = yMax-yMin+1;
+      }
+      
+      return {
+        xMin: xMin,
+        xMax: xMax,
+        yMin: yMin,
+        yMax: yMax,
+        width: filledWidth,
+        height: filledHeight,
+        fillRateAbsolute: filledPixel / (imgWidth*imgHeight),
+        fillRateRelative: filledPixel ? filledPixel / (filledWidth*filledHeight) : 0,
+      };
     };
 
-    var cropTop = scanY(true),
-    cropBottom = scanY(false),
-    cropLeft = scanX(true),
-    cropRight = scanX(false);
+    var crop = scan();
     
-    if(cropTop === null || cropLeft === null || cropBottom === null || cropRight === null) {
+    if(!crop.fillRateAbsolute) {
       send({
         func: 'onDataCropped',
         args: [null],
       });
-      return null;
+      return;
     }
 
-    var relevantData = signaturePadCanvas.getContext("2d").getImageData(cropLeft, cropTop, cropRight-cropLeft, cropBottom-cropTop);
+    var relevantData = signaturePadCanvas.getContext("2d").getImageData(crop.xMin, crop.yMin, crop.width, crop.height);
     var tempCanvas = document.createElement('canvas');
-    tempCanvas.width = cropRight-cropLeft;
-    tempCanvas.height = cropBottom-cropTop;
+    tempCanvas.width = crop.width;
+    tempCanvas.height = crop.height;
     tempCanvas.getContext("2d").putImageData(relevantData, 0, 0);
     
     var result = tempCanvas.toDataURL('image/png');

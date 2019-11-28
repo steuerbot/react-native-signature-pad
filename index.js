@@ -53,7 +53,7 @@ const SignaturePad = (props, ref) => {
     () => ({
       ...StyleSheet.absoluteFillObject,
       backgroundColor,
-      opacity: started ? 1 : 0,
+      opacity: started ? 0.99 : 0,
     }),
     [style, backgroundColor, started]
   );

@@ -1,9 +1,10 @@
 export default ({
-    penColor = '#000000',
-    dataURL = null,
-    minWidth = 1,
-    maxWidth = 3,
-    dotSize = 3,
+  penColor = '#000000',
+  dataURL = null,
+  minWidth = 1,
+  maxWidth = 2,
+  dotSize = 2,
+  minDistance = 1,
 }) => `
   const send = function(obj) {
     window.ReactNativeWebView.postMessage(JSON.stringify(obj));
@@ -34,6 +35,7 @@ export default ({
     dotSize: window.devicePixelRatio * ${dotSize},
     minWidth: window.devicePixelRatio * ${minWidth},
     maxWidth: window.devicePixelRatio * ${maxWidth},
+    minDistance: window.devicePixelRatio * ${minDistance},
     onBegin: function() {
       send({
         func: 'onBegin',

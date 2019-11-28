@@ -73,7 +73,7 @@ const SignaturePad = (props, ref) => {
   }, []);
 
   const source = useMemo(() => {
-    const script = injectedSignaturePad + injectedApplication(props);
+    const script = `${injectedSignaturePad};${injectedApplication(props)};true;`;
     const ratio = Math.max(PixelRatio.get(), 1);
     return {
       html: htmlContent({

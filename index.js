@@ -120,6 +120,8 @@ const SignaturePad = (props, ref) => {
       {size && (
         <View style={size}>
           <WebView
+            androidHardwareAccelerationDisabled
+            javaScriptEnabled
             ref={setRef}
             automaticallyAdjustContentInsets={false}
             onMessage={onMessage}
@@ -127,7 +129,6 @@ const SignaturePad = (props, ref) => {
             renderError={onError}
             renderLoading={loader}
             source={source}
-            javaScriptEnabled={true}
             style={padStyle}
           />
         </View>

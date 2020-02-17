@@ -1,5 +1,5 @@
 import React, {forwardRef, memo, useCallback, useEffect, useMemo, useState,} from 'react';
-import {PixelRatio, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 
 import htmlContent from './injectedHtml';
@@ -19,7 +19,7 @@ const SignaturePad = (props, ref) => {
 
   const [size, setSize] = useState(null);
   const onLayout = useCallback(e => {
-    const ratio = Math.max(PixelRatio.get(), 1);
+    const ratio = 1; // Math.max(PixelRatio.get(), 1);
     const { width, height } = e.nativeEvent.layout;
     const newWidth = width * ratio;
     const newHeight = height * ratio;
@@ -27,17 +27,17 @@ const SignaturePad = (props, ref) => {
     setSize({
       width: newWidth,
       height: newHeight,
-      transform: [
-        {
-          translateX: (width - newWidth) / 2,
-        },
-        {
-          translateY: (height - newHeight) / 2,
-        },
-        {
-          scale: 1 / ratio,
-        },
-      ],
+      // transform: [
+      //   {
+      //     translateX: (width - newWidth) / 2,
+      //   },
+      //   {
+      //     translateY: (height - newHeight) / 2,
+      //   },
+      //   {
+      //     scale: 1 / ratio,
+      //   },
+      // ],
     });
   }, []);
 
@@ -74,7 +74,7 @@ const SignaturePad = (props, ref) => {
 
   const source = useMemo(() => {
     const script = `${injectedSignaturePad};${injectedApplication(props)};true;`;
-    const ratio = Math.max(PixelRatio.get(), 1);
+    const ratio = 1; // Math.max(PixelRatio.get(), 1);
     return {
       html: htmlContent({
         script,

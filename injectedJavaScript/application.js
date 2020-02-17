@@ -30,12 +30,14 @@ export default ({
   signaturePadCanvas.width = bodyWidth;
   signaturePadCanvas.height = bodyHeight;
   
+  var ratio = 1; // window.devicePixelRatio;
+  
   window.signaturePad = new SignaturePad(signaturePadCanvas, {
     penColor: '${penColor}',
-    dotSize: window.devicePixelRatio * ${dotSize},
-    minWidth: window.devicePixelRatio * ${minWidth},
-    maxWidth: window.devicePixelRatio * ${maxWidth},
-    minDistance: window.devicePixelRatio * ${minDistance},
+    dotSize: ratio * ${dotSize},
+    minWidth: ratio * ${minWidth},
+    maxWidth: ratio * ${maxWidth},
+    minDistance: ratio * ${minDistance},
     onBegin: function() {
       send({
         func: 'onBegin',

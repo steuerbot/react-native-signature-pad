@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useCallback, useEffect, useMemo, useState,} from 'react';
+import React, {forwardRef, memo, useCallback, useEffect, useMemo, useState, } from 'react';
 import {PixelRatio, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 
@@ -18,7 +18,7 @@ const SignaturePad = (props, ref) => {
   } = props;
 
   const [size, setSize] = useState(null);
-  const onLayout = useCallback(e => {
+  const onLayout = useCallback((e) => {
     const ratio = Math.max(PixelRatio.get(), 1);
     const { width, height } = e.nativeEvent.layout;
     const newWidth = width * ratio;
@@ -58,14 +58,12 @@ const SignaturePad = (props, ref) => {
     [style, backgroundColor, started]
   );
 
-  const containerStyle = useMemo(() => {
-    return {
-      flex: 1,
-      ...style,
-    };
-  }, [style]);
+  const containerStyle = useMemo(() => ({
+    flex: 1,
+    ...style,
+  }), [style]);
 
-  const onMessage = useCallback(event => {
+  const onMessage = useCallback((event) => {
     const { func, args } = JSON.parse(event.nativeEvent.data);
     if (props[func]) {
       props[func](...args);
@@ -88,10 +86,12 @@ const SignaturePad = (props, ref) => {
   const [webViewInstance, setWebView] = useState();
 
   const setRef = useCallback(
-    webView => {
+    (webView) => {
       setWebView(webView);
-      const getExecuteFunction = (func, args = []) => {
-        return () => webView.injectJavaScript(`window.${func}();true;`);
+      const getExecuteFunction = (func, args = []) => () => {
+        if (webView) {
+          webView.injectJavaScript(`window.${func}();true;`);
+        }
       };
       if (ref) {
         ref.current = {
@@ -127,7 +127,7 @@ const SignaturePad = (props, ref) => {
             renderError={onError}
             renderLoading={loader}
             source={source}
-            javaScriptEnabled={true}
+            javaScriptEnabled
             style={padStyle}
           />
         </View>

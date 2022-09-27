@@ -6,7 +6,15 @@ export default ({
   dotSize = 2,
   minDistance = 1,
 }) => `
-  const send = function(obj) {
+  var toBlack = function(imageData) {
+    var d = imageData.data;
+    // always use black color
+    for (var i = 0; i < d.length; i += (i % 4 === 2 ? 2 : 1)) {
+      d[i] = 0;
+    }
+  };
+
+  var send = function(obj) {
     window.ReactNativeWebView.postMessage(JSON.stringify(obj));
   };
 
@@ -116,6 +124,7 @@ export default ({
     }
 
     var relevantData = signaturePadCanvas.getContext("2d").getImageData(crop.xMin, crop.yMin, crop.width, crop.height);
+    toBlack(relevantData);
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = crop.width;
     tempCanvas.height = crop.height;
